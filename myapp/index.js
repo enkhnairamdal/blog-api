@@ -4,6 +4,9 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const { categoryRouter } = require("./routes/categoryController");
 const { articleRouter } = require("./routes/articleController");
+const { userRouter } = require("./routes/userController");
+const { checkAuth } = require("./middlewares/checkAuth");
+
 const { v4: uuid } = require("uuid");
 const multer = require("multer");
 const cloudinary = require("cloudinary");
@@ -52,17 +55,13 @@ app.post(
     });
   }
 );
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  age: Number,
-  createdAt: Date,
-});
 
-const User = mongoose.model("User", userSchema, "hereglegch");
 
-app.use("/categories", categoryRouter);
-app.use("/articles", articleRouter);
+
+
+app.use("/categories", checkAuth, categoryRouter);
+app.use("/articles",checkAuth, articleRouter);
+app.use("/users", userRouter);
 app.get("/test-mongoose", (req, res) => {
   User.create({
     name: "Baldan",
